@@ -32,15 +32,15 @@ setup.html (builder)  ──build link──►  index.html (player)
 add sections + Launch                  full-screen, auto-advancing, animated logo
 ```
 
-- **Builder:** https://mivics1.github.io/church-player-controls/setup.html
-- **Player:** https://mivics1.github.io/church-player-controls/
+- **Builder:** https://mivics1.github.io/church-player-controls-v3/setup.html
+- **Player:** https://mivics1.github.io/church-player-controls-v3/
 - The builder assembles a player link from your inputs; the player reads everything from the URL — nothing is stored server-side.
 
 ---
 
 ## Using it (weekly, ~2 min)
 
-1. On the auditorium PC in **Chrome**, open the **builder**: `…/church-player-controls/setup.html`.
+1. On the auditorium PC in **Chrome**, open the **builder**: `…/church-player-controls-v3/setup.html`.
 2. Paste the **video link** (a *recording*, not a live stream). Leave **Logo URL** blank to use the church logo.
 3. For each part, type **Name**, **Start (mm:ss)**, **End (mm:ss)**, choose a **Speed**, and click **➕ Add**. Repeat for every section.
 4. Reorder with **↑ / ↓**, remove with **✕**.
@@ -65,7 +65,7 @@ On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ �
 The builder produces these automatically, but you can also open the player directly:
 
 ```
-https://mivics1.github.io/church-player-controls/?video=<URL>&logo=<URL>&logoSec=3&reveal=3.5&sections=<url-encoded JSON>
+https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logoSec=3&reveal=3.5&skip=10&sections=<url-encoded JSON>
 ```
 
 | Param | Meaning |
@@ -113,7 +113,7 @@ Example `sections` (before URL-encoding):
 ## Important constraints
 
 - ⚠️ **Recording only.** You can't seek to fixed times on a *live* stream — use an on-demand recording.
-- ⚠️ **Ad-free / no YouTube tells** is best with **your own non-monetized** YouTube upload (set **Unlisted**) or a **direct/HLS** link. YouTube branding can't be 100% removed by ToS, but controls/title/play-pause are hidden in normal playback; a slow connection can still flash a buffering spinner mid-clip.
+- ⚠️ **Ad-free / no YouTube tells** is best with **your own non-monetized** YouTube upload (set **Unlisted**) or a **direct/HLS** link. YouTube branding can't be 100% removed by ToS, but controls/title/play-pause are hidden in normal playback. Buffer-ahead (see [Seeking & buffer-ahead](#seeking--buffer-ahead-no-lag)) keeps **direct/HLS** sources from lagging mid-clip; with **YouTube**, a very slow connection can still briefly buffer because its buffer depth can't be forced via the IFrame API.
 - ⚠️ Use **Chrome**; YouTube seeking is accurate to ~±1s (direct video is exact).
 
 ---
@@ -125,6 +125,7 @@ Example `sections` (before URL-encoding):
 | **▶ Launch Player** is disabled | Add at least one section **and** enter a video link |
 | A section is skipped / won't add | **End time must be after start** for that section |
 | Black screen after Start | Video isn't embeddable → use your own Unlisted upload or a direct `.mp4`/`.m3u8` link |
+| Video lags / buffers mid-clip | Prefer a direct `.mp4`/`.m3u8` source for full buffer-ahead; see [Seeking & buffer-ahead](#seeking--buffer-ahead-no-lag) |
 | No sound | Click **Start** (sound needs the click); raise PC volume |
 | Logo shows as a text card | Add your `logo.png` to this repo |
 | Ads appear | Video is monetized/third-party → use your own non-monetized upload |

@@ -50,6 +50,7 @@ ol.list .info{font-size:14px;font-weight:600;color:#26324a}
 <div><label>Logo seconds between sections</label><input id="logoSec" type="number" value="3" min="1"></div>
 <div><label>Reveal hold (sec)</label><input id="reveal" type="number" value="3.5" min="0" step="0.5"></div>
 <div><label>Skip step (sec)</label><input id="skip" type="number" value="10" min="1"></div>
+<div><label>Quality</label><select id="quality"><option value="max">Highest</option><option value="1080">1080p</option><option value="720">720p</option><option value="auto">Auto</option></select></div>
 </div>
 <hr>
 <h2>Sections (added in order)</h2>
@@ -110,6 +111,7 @@ var logo=$('logo').value.trim();if(logo)p.set('logo',logo);
 p.set('logoSec',String(parseInt($('logoSec').value,10)||3));
 p.set('reveal',String(parseFloat($('reveal').value)||3.5));
 p.set('skip',String(parseFloat($('skip').value)||10));
+p.set('quality',$('quality').value||'max');
 p.set('sections',JSON.stringify(list.map(function(s){return{name:s.name,start:s.start,end:s.end,rate:s.rate}})));
 location.href='index.html?'+p.toString()
 }

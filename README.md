@@ -65,7 +65,7 @@ On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ �
 The builder produces these automatically, but you can also open the player directly:
 
 ```
-https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logoSec=3&reveal=3.5&skip=10&sections=<url-encoded JSON>
+https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logoSec=3&reveal=3.5&skip=10&quality=max&sections=<url-encoded JSON>
 ```
 
 | Param | Meaning |
@@ -76,6 +76,7 @@ https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logo
 | `logoSec` | Seconds to hold the logo between sections (default 3) |
 | `reveal` | Seconds the logo stays after a clip starts, hiding YouTube's start-of-clip UI (default 3.5) |
 | `skip` | Seconds each ⏪ / ⏩ (and `J` / `L`) jumps within the current section (default 10) |
+| `quality` | Preferred picture quality: `max` (highest, default) · `1080` · `720` · `auto`. Enforced for HLS; best-effort for YouTube (see below) |
 
 Example `sections` (before URL-encoding):
 ```json
@@ -94,7 +95,17 @@ Example `sections` (before URL-encoding):
 - **Buffer-ahead:** the player loads the stream well ahead of the playhead so fast-forwarding lands on already-buffered video:
   - **HLS (`.m3u8`)** — buffers minutes ahead (tuned hls.js settings: large `maxBufferLength` / `maxMaxBufferLength`). Strongest effect — this is the real "loaded to 10:00" behavior.
   - **Direct MP4/WebM** — `preload="auto"`; the browser buffers ahead on its own (CDNs that honor range requests help).
-  - **YouTube** — YouTube controls its own buffer depth and it **can't be forced** via the IFrame API. The player masks transition buffering with the animated logo and **pre-seeks the next section behind the logo** during the gap, so on a normal connection transitions feel seamless. For full control of how far ahead it loads, use a direct `.mp4`/`.m3u8` source.
+  - **YouTube** — YouTube controls its own buffer depth and it **can't be forced** via the IFrame API. The player masks transition buffering with the animated logo. (The gap pre-seek above is applied only to direct/HLS, *not* YouTube — on YouTube an extra seek just makes it re-buffer and drop quality.) For full control of how far ahead it loads, use a direct `.mp4`/`.m3u8` source.
+
+---
+
+## Picture quality
+
+Set it with the builder's **Quality** dropdown or the `quality` URL param (`max` / `1080` / `720` / `auto`; default `max`).
+
+- **HLS (`.m3u8`)** — **enforced.** `max` locks the top rendition; `1080`/`720` caps adaptive bitrate at that height. This is the reliable way to guarantee HD.
+- **Direct MP4/WebM** — picture = the file's own resolution. Upload/link an HD file for HD.
+- **YouTube** — **best-effort only.** YouTube auto-selects quality based on bandwidth and player size; the IFrame API's quality request is a hint it may ignore, and it tends to restart low after each seek. The player now (a) requests HD on load and re-requests it after each section jump, and (b) avoids the extra gap seek that was making it reset. But if YouTube still looks soft or stutters, the cause is **bandwidth** or the **source upload's resolution** — the only guaranteed-HD path is a direct `.mp4`/`.m3u8` source with `quality=max`.
 
 ---
 
@@ -126,6 +137,7 @@ Example `sections` (before URL-encoding):
 | A section is skipped / won't add | **End time must be after start** for that section |
 | Black screen after Start | Video isn't embeddable → use your own Unlisted upload or a direct `.mp4`/`.m3u8` link |
 | Video lags / buffers mid-clip | Prefer a direct `.mp4`/`.m3u8` source for full buffer-ahead; see [Seeking & buffer-ahead](#seeking--buffer-ahead-no-lag) |
+| Video looks blurry / low-res | Quality defaults to **Highest**. On YouTube it's best-effort (bandwidth + source upload decide it); for guaranteed HD use a direct `.mp4`/`.m3u8` source with `quality=max`. See [Picture quality](#picture-quality) |
 | No sound | Click **Start** (sound needs the click); raise PC volume |
 | Logo shows as a text card | Add your `logo.png` to this repo |
 | Ads appear | Video is monetized/third-party → use your own non-monetized upload |

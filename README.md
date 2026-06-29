@@ -1,6 +1,8 @@
-# Church Program Auto-Player — controls (Prev · Play/Pause · Next)
+# Church Program Auto-Player — controls (Prev · ⏪ · Play/Pause · ⏩ · Next)
 
-A no-install, full-screen web player that streams chosen sections of a recorded service video — in your order — with the church logo animated between each section, per-section playback speed, and the YouTube interface hidden. Built for **Deeper Life Bible Church** auditorium playback.
+A no-install, full-screen web player that streams chosen sections of a recorded service video — in your order — with the church logo animated between each section, per-section playback speed, **in-section rewind / fast-forward (±10s)**, **buffer-ahead playback** so it doesn't lag mid-clip, and the YouTube interface hidden. Built for **Deeper Life Bible Church** auditorium playback.
+
+> **v3 adds:** ⏪ / ⏩ buttons (and `J` / `L` keys) that jump ±10s **within the current section**, plus buffer-ahead so fast-forwarding lands on already-loaded video (the "you're at 2:00 but it's loaded to 10:00" feel). See [Seeking & buffer-ahead](#seeking--buffer-ahead-no-lag).
 
 **v2 adds a builder page:** instead of fixed GHS/Choir/GS fields, you **add any number of named sections** (Name + Start + End + Speed) with an **Add** button, reorder/remove them, then launch the player.
 
@@ -50,8 +52,11 @@ Sections play in order: section → logo (in/out) → next section → … → e
 | Key | Action |
 |-----|--------|
 | `Space` | Pause / resume |
-| `→` | Skip to next section |
+| `→` / `←` | Next / previous **section** |
+| `L` / `J` | Forward / rewind **10s** within the current section |
 | `Esc` | Exit full-screen |
+
+On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ · ⏩ +10s · ⏭ Next**.
 
 ---
 
@@ -70,6 +75,7 @@ https://mivics1.github.io/church-player-controls/?video=<URL>&logo=<URL>&logoSec
 | `logo` | Logo image/animation URL (optional; defaults to bundled `logo.png`) |
 | `logoSec` | Seconds to hold the logo between sections (default 3) |
 | `reveal` | Seconds the logo stays after a clip starts, hiding YouTube's start-of-clip UI (default 3.5) |
+| `skip` | Seconds each ⏪ / ⏩ (and `J` / `L`) jumps within the current section (default 10) |
 
 Example `sections` (before URL-encoding):
 ```json
@@ -79,6 +85,16 @@ Example `sections` (before URL-encoding):
 ```
 
 > **Backward compatible:** old links using `ghs=<start>-<end>&choir=…&gs=…` (+ `gsRate`) still work — the player falls back to them when `sections` is absent.
+
+---
+
+## Seeking & buffer-ahead (no lag)
+
+- **Rewind / Fast-forward:** **⏪ −10s** and **⏩ +10s** buttons (keys **`J`** / **`L`**) move the playhead **within the current section** — they clamp to that section's start/end, so you can't slip into another part, and the program still auto-advances when you reach a section's end. The **⏮ / ⏭** buttons (and `←` / `→`) still jump between whole sections. Change the jump size with the builder's **Skip step** field or the `skip` URL param.
+- **Buffer-ahead:** the player loads the stream well ahead of the playhead so fast-forwarding lands on already-buffered video:
+  - **HLS (`.m3u8`)** — buffers minutes ahead (tuned hls.js settings: large `maxBufferLength` / `maxMaxBufferLength`). Strongest effect — this is the real "loaded to 10:00" behavior.
+  - **Direct MP4/WebM** — `preload="auto"`; the browser buffers ahead on its own (CDNs that honor range requests help).
+  - **YouTube** — YouTube controls its own buffer depth and it **can't be forced** via the IFrame API. The player masks transition buffering with the animated logo and **pre-seeks the next section behind the logo** during the gap, so on a normal connection transitions feel seamless. For full control of how far ahead it loads, use a direct `.mp4`/`.m3u8` source.
 
 ---
 

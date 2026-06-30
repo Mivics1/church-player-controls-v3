@@ -67,7 +67,7 @@ When you leave full screen (e.g. by pressing `Esc`), a **⛶ maximise button** a
 The builder produces these automatically, but you can also open the player directly:
 
 ```
-https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logoSec=3&reveal=3.5&skip=10&quality=max&sections=<url-encoded JSON>
+https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logoSec=1&reveal=3.5&skip=10&quality=max&sections=<url-encoded JSON>
 ```
 
 | Param | Meaning |
@@ -75,7 +75,7 @@ https://mivics1.github.io/church-player-controls-v3/?video=<URL>&logo=<URL>&logo
 | `video` | YouTube **or** direct/HLS recording URL |
 | `sections` | **Primary.** URL-encoded JSON array; each item `{ "name", "start", "end", "rate" }` with **start/end in seconds**, `rate` = 1 / 1.25 / 1.5 |
 | `logo` | Logo image/animation URL (optional; defaults to bundled `logo.png`) |
-| `logoSec` | Seconds to hold the logo between sections (default 3) |
+| `logoSec` | Seconds to hold the logo between sections (default 1) |
 | `reveal` | Seconds the logo stays after a clip starts, hiding YouTube's start-of-clip UI (default 3.5) |
 | `skip` | Seconds each ⏪ / ⏩ (and `J` / `L`) jumps within the current section (default 10) |
 | `quality` | Preferred picture quality: `max` (highest, default) · `1080` · `720` · `auto`. Enforced for HLS; best-effort for YouTube (see below) |

@@ -60,7 +60,7 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:system-ui,Sego
 var q=new URLSearchParams(location.search);
 var videoUrl=(q.get('video')||'').trim();
 var logoUrl=(q.get('logo')||'').trim()||'logo.png';
-var logoSec=Math.max(1,parseInt(q.get('logoSec')||'3',10)||3);
+var logoSec=Math.max(1,parseInt(q.get('logoSec')||'1',10)||1);
 var gsRate=parseFloat(q.get('gsRate'))||1;
 var revealHold=Math.max(0,parseFloat(q.get('reveal'))||3.5);
 var SKIP=Math.max(1,parseFloat(q.get('skip'))||10);

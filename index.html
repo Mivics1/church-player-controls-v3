@@ -23,6 +23,9 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:system-ui,Sego
 #controls button:hover{background:rgba(255,255,255,.28)}
 #controls #playBtn{width:62px;height:62px;font-size:26px;background:rgba(30,125,52,.9)}
 #controls #playBtn:hover{background:rgba(35,151,62,.95)}
+#maxBtn{position:absolute;top:18px;right:18px;z-index:46;width:54px;height:54px;border:0;border-radius:50%;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+#maxBtn.show{opacity:1;pointer-events:auto}
+#maxBtn:hover{background:rgba(0,0,0,.75)}
 #start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0b0b0b;z-index:50;color:#fff;text-align:center;padding:24px}
 #start h1{font-size:clamp(20px,4vw,40px);margin-bottom:10px}
 #start p{opacity:.65;margin-bottom:28px;font-size:clamp(13px,2vw,18px);max-width:640px}
@@ -44,6 +47,7 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:system-ui,Sego
 <button id="fwdBtn" title="Forward 10s (L)">&#9193;</button>
 <button id="nextBtn" title="Next section (Right arrow)">&#9197;</button>
 </div>
+<button id="maxBtn" title="Full screen">&#9974;</button>
 <div id="start">
 <h1>Church Program</h1>
 <p>Press start to play full-screen. Sections play in order, with the church logo animated between each. Move the mouse for Prev / Pause / Next.</p>
@@ -67,14 +71,14 @@ var sections=[];
 var sj=q.get('sections');
 if(sj){try{var arr=JSON.parse(sj);if(Array.isArray(arr)){arr.forEach(function(o){var st=Number(o.start)||0,en=Number(o.end)||0;if(en>st)sections.push({name:String(o.name||'Section'),start:st,end:en,rate:parseFloat(o.rate)||1})})}}catch(e){}}
 if(!sections.length){sections=[Object.assign({name:'GHS',rate:1},rng(q.get('ghs'))),Object.assign({name:'Choir Song',rate:1},rng(q.get('choir'))),Object.assign({name:'GS Message',rate:gsRate},rng(q.get('gs')))].filter(function(s){return s.end>s.start})}
-var app=document.getElementById('app'),elStart=document.getElementById('start'),elErr=document.getElementById('err'),elLogo=document.getElementById('logo'),elHtml5=document.getElementById('html5'),elControls=document.getElementById('controls'),playBtn=document.getElementById('playBtn');
+var app=document.getElementById('app'),elStart=document.getElementById('start'),elErr=document.getElementById('err'),elLogo=document.getElementById('logo'),elHtml5=document.getElementById('html5'),elControls=document.getElementById('controls'),playBtn=document.getElementById('playBtn'),maxBtn=document.getElementById('maxBtn');
 if(/\.(mp4|webm|m4v)(\?|$)/i.test(logoUrl)){var v=document.createElement('video');v.src=logoUrl;v.autoplay=true;v.muted=true;v.loop=true;v.setAttribute('playsinline','');elLogo.appendChild(v);}
 else{var img=document.createElement('img');img.src=logoUrl;img.alt='Church logo';img.onerror=function(){this.remove();var d=document.createElement('div');d.className='fallback';d.textContent='DEEPER LIFE BIBLE CHURCH';elLogo.appendChild(d);};elLogo.appendChild(img);}
 if(!videoUrl){elErr.textContent='No video link provided.';return}
 if(!sections.length){elErr.textContent='No valid sections - check the start/end times.';return}
 function ytId(u){var m=u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);return m?m[1]:null}
 var YTID=ytId(videoUrl),isHls=/\.m3u8(\?|$)/i.test(videoUrl);
-var idx=0,phase='idle',paused=false,gapLeft=0,holdLeft=0,seekTicks=0,ytState=-1;var engine={ready:false};
+var idx=0,phase='idle',paused=false,gapLeft=0,holdLeft=0,seekTicks=0,ytState=-1,started=false;var engine={ready:false};
 function showLogo(on,instant){if(instant){elLogo.style.transition='none';elLogo.classList.toggle('show',on);void elLogo.offsetWidth;elLogo.style.transition='';}else{elLogo.classList.toggle('show',on)}}
 function beginSection(i){idx=i;phase='seeking';seekTicks=0;showLogo(true);engine.mute&&engine.mute();engine.seekPlay(sections[i].start);engine.setRate&&engine.setRate(sections[i].rate||1)}
 function toGap(){phase='gap';gapLeft=GAP_TICKS;engine.mute&&engine.mute();showLogo(true);var nx=sections[idx+1];if(nx&&engine.canPrebuffer&&engine.seek){try{engine.seek(nx.start)}catch(e){}}}
@@ -105,7 +109,12 @@ document.getElementById('backBtn').onclick=back;
 document.getElementById('fwdBtn').onclick=fwd;
 playBtn.onclick=togglePause;
 ['mousemove','touchstart'].forEach(function(ev){document.addEventListener(ev,showControls,{passive:true})});
-function startProgram(){showLogo(true,true);elStart.style.display='none';var fs=app.requestFullscreen||app.webkitRequestFullscreen||app.msRequestFullscreen;if(fs){try{fs.call(app)}catch(e){}}paused=false;setPlayIcon();engine.unmute&&engine.unmute();engine.kick&&engine.kick();var tries=0;(function go(){if(engine.ready){beginSection(0);showControls()}else if(tries++<80){setTimeout(go,150)}else{beginSection(0)}})()}
+function enterFs(){var fs=app.requestFullscreen||app.webkitRequestFullscreen||app.msRequestFullscreen;if(fs){try{fs.call(app)}catch(e){}}}
+function isFs(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.msFullscreenElement)}
+function updateMaxBtn(){maxBtn.classList.toggle('show',started&&!isFs())}
+maxBtn.onclick=enterFs;
+['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(function(ev){document.addEventListener(ev,updateMaxBtn)});
+function startProgram(){started=true;showLogo(true,true);elStart.style.display='none';enterFs();paused=false;setPlayIcon();engine.unmute&&engine.unmute();engine.kick&&engine.kick();setTimeout(updateMaxBtn,500);var tries=0;(function go(){if(engine.ready){beginSection(0);showControls()}else if(tries++<80){setTimeout(go,150)}else{beginSection(0)}})()}
 document.getElementById('startBtn').addEventListener('click',startProgram);
 document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='ArrowRight'){e.preventDefault();nextSec()}else if(e.code==='ArrowLeft'){e.preventDefault();prevSec()}else if(e.code==='KeyL'){e.preventDefault();fwd()}else if(e.code==='KeyJ'){e.preventDefault();back()}else{showControls()}});
 })();

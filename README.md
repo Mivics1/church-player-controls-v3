@@ -54,9 +54,11 @@ Sections play in order: section → logo (in/out) → next section → … → e
 | `Space` | Pause / resume |
 | `→` / `←` | Next / previous **section** |
 | `L` / `J` | Forward / rewind **10s** within the current section |
-| `Esc` | Exit full-screen |
+| `Esc` | Exit full-screen (a ⛶ button then appears top-right to return) |
 
 On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ · ⏩ +10s · ⏭ Next**.
+
+When you leave full screen (e.g. by pressing `Esc`), a **⛶ maximise button** appears in the top-right corner — click it to go back to full screen. It hides again once full screen returns.
 
 ---
 

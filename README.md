@@ -98,7 +98,7 @@ Example `sections` (before URL-encoding):
 - **Buffer-ahead:** the player loads the stream well ahead of the playhead so fast-forwarding lands on already-buffered video:
   - **HLS (`.m3u8`)** — buffers minutes ahead (tuned hls.js settings: large `maxBufferLength` / `maxMaxBufferLength`). Strongest effect — this is the real "loaded to 10:00" behavior.
   - **Direct MP4/WebM** — `preload="auto"`; the browser buffers ahead on its own (CDNs that honor range requests help).
-  - **YouTube** — YouTube controls its own buffer depth and it **can't be forced** via the IFrame API. The player masks transition buffering with the animated logo. (The gap pre-seek above is applied only to direct/HLS, *not* YouTube — on YouTube an extra seek just makes it re-buffer and drop quality.) For full control of how far ahead it loads, use a direct `.mp4`/`.m3u8` source.
+  - **YouTube** — YouTube controls its own buffer depth and it **can't be forced** via the IFrame API. But rewind/fast-forward now use YouTube's **in-buffer seek** (`seekTo(t, false)`, `allowSeekAhead=false`) — the same technique its own player uses while scrubbing — so a ±10s skip to a spot YouTube has **already downloaded jumps instantly with no spinner**. Seeking *past* what YouTube has downloaded still buffers briefly (unavoidable — YouTube decides how far ahead it loads). The player also masks transition buffering with the animated logo. For guaranteed download-ahead on every seek, use a direct `.mp4`/`.m3u8` source.
 
 ---
 

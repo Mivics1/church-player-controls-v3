@@ -106,9 +106,9 @@ Example `sections` (before URL-encoding):
 
 Set it with the builder's **Quality** dropdown or the `quality` URL param (`max` / `1080` / `720` / `auto`; default `max`).
 
-- **HLS (`.m3u8`)** — **enforced.** `max` locks the top rendition; `1080`/`720` caps adaptive bitrate at that height. This is the reliable way to guarantee HD.
+- **HLS (`.m3u8`)** — the `quality` value biases adaptive bitrate: `max` lets it climb to the top rendition; `1080`/`720` caps it at that height. ABR stays enabled so a slow network adapts instead of stalling.
 - **Direct MP4/WebM** — picture = the file's own resolution. Upload/link an HD file for HD.
-- **YouTube** — **best-effort only.** YouTube auto-selects quality based on bandwidth and player size; the IFrame API's quality request is a hint it may ignore, and it tends to restart low after each seek. The player now (a) requests HD on load and re-requests it after each section jump, and (b) avoids the extra gap seek that was making it reset. But if YouTube still looks soft or stutters, the cause is **bandwidth** or the **source upload's resolution** — the only guaranteed-HD path is a direct `.mp4`/`.m3u8` source with `quality=max`.
+- **YouTube** — **fully automatic.** The app does **not** send any quality hint to YouTube: the IFrame API's quality controls are deprecated/ignored, and forcing them was disrupting playback, so `quality` has no effect on YouTube. YouTube picks quality from bandwidth and player size on its own. If it looks soft, the cause is **bandwidth** or the **source upload's resolution** — the only guaranteed-HD path is a direct `.mp4`/`.m3u8` source with `quality=max`.
 
 ---
 

@@ -52,8 +52,9 @@ Sections play in order: section → logo (in/out) → next section → … → e
 | Key | Action |
 |-----|--------|
 | `Space` | Pause / resume |
-| `→` / `←` | Next / previous **section** |
-| `L` / `J` | Forward / rewind **10s** within the current section |
+| `→` / `←` | Forward / rewind **10s** within the current section |
+| `L` / `J` | Forward / rewind **10s** (same as the arrows) |
+| `Shift`+`→` / `Shift`+`←` | Next / previous **section** |
 | `Esc` | Exit full-screen (a ⛶ button then appears top-right to return) |
 
 On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ · ⏩ +10s · ⏭ Next**.
@@ -93,7 +94,7 @@ Example `sections` (before URL-encoding):
 
 ## Seeking & buffer-ahead (no lag)
 
-- **Rewind / Fast-forward:** **⏪ −10s** and **⏩ +10s** buttons (keys **`J`** / **`L`**) move the playhead **within the current section** — they clamp to that section's start/end, so you can't slip into another part, and the program still auto-advances when you reach a section's end. The **⏮ / ⏭** buttons (and `←` / `→`) still jump between whole sections. Change the jump size with the builder's **Skip step** field or the `skip` URL param.
+- **Rewind / Fast-forward:** **⏪ −10s** and **⏩ +10s** buttons (keys **`←`** / **`→`**, or **`J`** / **`L`**) move the playhead **within the current section** — they clamp to that section's start/end, so you can't slip into another part, and the program still auto-advances when you reach a section's end. The **⏮ / ⏭** buttons (or **`Shift`+`←`** / **`Shift`+`→`**) jump between whole sections. Change the jump size with the builder's **Skip step** field or the `skip` URL param.
 - **Buffer-ahead:** the player loads the stream well ahead of the playhead so fast-forwarding lands on already-buffered video:
   - **HLS (`.m3u8`)** — buffers minutes ahead (tuned hls.js settings: large `maxBufferLength` / `maxMaxBufferLength`). Strongest effect — this is the real "loaded to 10:00" behavior.
   - **Direct MP4/WebM** — `preload="auto"`; the browser buffers ahead on its own (CDNs that honor range requests help).

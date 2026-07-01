@@ -41,11 +41,11 @@ html,body{height:100%;background:#000;overflow:hidden;font-family:system-ui,Sego
 <div id="shield"></div>
 <div id="logo"></div>
 <div id="controls">
-<button id="prevBtn" title="Previous section (Left arrow)">&#9198;</button>
-<button id="backBtn" title="Rewind 10s (J)">&#9194;</button>
+<button id="prevBtn" title="Previous section (Shift + Left arrow)">&#9198;</button>
+<button id="backBtn" title="Rewind 10s (Left arrow / J)">&#9194;</button>
 <button id="playBtn" title="Pause / Play (Space)">&#9208;</button>
-<button id="fwdBtn" title="Forward 10s (L)">&#9193;</button>
-<button id="nextBtn" title="Next section (Right arrow)">&#9197;</button>
+<button id="fwdBtn" title="Forward 10s (Right arrow / L)">&#9193;</button>
+<button id="nextBtn" title="Next section (Shift + Right arrow)">&#9197;</button>
 </div>
 <button id="maxBtn" title="Full screen">&#9974;</button>
 <div id="start">
@@ -116,7 +116,7 @@ maxBtn.onclick=enterFs;
 ['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(function(ev){document.addEventListener(ev,updateMaxBtn)});
 function startProgram(){started=true;showLogo(true,true);elStart.style.display='none';enterFs();paused=false;setPlayIcon();engine.unmute&&engine.unmute();engine.kick&&engine.kick();setTimeout(updateMaxBtn,500);var tries=0;(function go(){if(engine.ready){beginSection(0);showControls()}else if(tries++<80){setTimeout(go,150)}else{beginSection(0)}})()}
 document.getElementById('startBtn').addEventListener('click',startProgram);
-document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='ArrowRight'){e.preventDefault();nextSec()}else if(e.code==='ArrowLeft'){e.preventDefault();prevSec()}else if(e.code==='KeyL'){e.preventDefault();fwd()}else if(e.code==='KeyJ'){e.preventDefault();back()}else{showControls()}});
+document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.code==='ArrowRight'){e.preventDefault();e.shiftKey?nextSec():fwd()}else if(e.code==='ArrowLeft'){e.preventDefault();e.shiftKey?prevSec():back()}else if(e.code==='KeyL'){e.preventDefault();fwd()}else if(e.code==='KeyJ'){e.preventDefault();back()}else{showControls()}});
 })();
 </script>
 </body>

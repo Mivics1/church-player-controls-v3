@@ -55,9 +55,12 @@ Sections play in order: section → logo (in/out) → next section → … → e
 | `→` / `←` | Forward / rewind **10s** within the current section |
 | `L` / `J` | Forward / rewind **10s** (same as the arrows) |
 | `Shift`+`→` / `Shift`+`←` | Next / previous **section** |
+| `C` | Captions (subtitles) on / off |
 | `Esc` | Exit full-screen (a ⛶ button then appears top-right to return) |
 
-On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ · ⏩ +10s · ⏭ Next**.
+On-screen controls (appear on mouse move): **⏮ Prev · ⏪ −10s · ▶/⏸ · ⏩ +10s · ⏭ Next · CC**.
+
+**Captions are off by default.** The **CC** button in the bottom controls (or the `C` key) turns subtitles on or off; it lights up green when captions are on. Only soft captions are toggleable — **burned-in/hard subtitles that are part of the video's picture can't be removed.**
 
 When you leave full screen (e.g. by pressing `Esc`), a **⛶ maximise button** appears in the top-right corner — click it to go back to full screen. It hides again once full screen returns.
 
